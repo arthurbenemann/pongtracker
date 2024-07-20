@@ -80,7 +80,13 @@ def processGSheet(url: str):
     print(df)
     print(totals)
 
-    df[getUniquePlayers(df)].plot(kind="line")
+    df_by_eod = df[['date']+getUniquePlayers(df)].groupby('date').last()
+
+    ax = df_by_eod.plot(kind="line")
+    ax.set_xticks(df_by_eod.index)  
+    ax.set_xticklabels(df_by_eod.index.strftime('%Y-%m-%d'), rotation=45)
+
+    ax.grid()
     plt.show()
 
 
