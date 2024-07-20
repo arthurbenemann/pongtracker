@@ -2,6 +2,12 @@ import re
 import pandas as pd
 
 
+def getDfFromGsheet(url: str) -> pd.DataFrame:
+    csv_url = parse_google_sheet_url(url)
+    df = getDataFromGSheet(csv_url)
+    return df
+
+
 def parse_google_sheet_url(url: str) -> str:
     match = re.search(r"/d/([a-zA-Z0-9-_]+)", url)
     if not match:

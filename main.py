@@ -2,11 +2,10 @@ import score
 import gsheet
 from matplotlib import pyplot as plt
 import argparse
+import pandas as pd
 
 
-def processAndPlot(url: str):
-
-    df = gsheet.getDataFromGSheet(url)
+def processAndPlot(df: pd.DataFrame):
     df = score.calcRatings(df)
     totals = score.calcTotalWinLoss(df)
 
@@ -27,8 +26,9 @@ def main():
     parser = argparse.ArgumentParser(description="Process pongtracker URL")
     parser.add_argument("url", type=str, help="URL to Gsheet process")
     args = parser.parse_args()
-    csv_url = gsheet.parse_google_sheet_url(args.url)
-    processAndPlot(csv_url)
+
+    df = gsheet.getDfFromGsheet(args.url)
+    processAndPlot(df)
 
 
 if __name__ == "__main__":
