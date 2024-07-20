@@ -52,7 +52,7 @@ def calcRatings(df: pd.DataFrame) -> pd.DataFrame:
         model.rate(match)
 
         for player in players:
-            df.loc[index, player.name] = player.ordinal()
+            df.loc[index, player.name] = player.ordinal(alpha=200/model.sigma, target=1500) # Elo scaling
     return df
 
 
