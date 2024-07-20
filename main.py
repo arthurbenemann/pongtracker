@@ -6,14 +6,14 @@ import re
 import argparse
 
 
-def getUniquePlayers(df):
+def getUniquePlayers(df: pd.DataFrame) -> list[str]:
     df[["win", "loss"]] = df[["win", "loss"]].applymap(lambda x: set(x))
     unique_players = list(set().union(*df["win"], *df["loss"]))
     unique_players.sort()
     return unique_players
 
 
-def calcTotalWinLoss(df):
+def calcTotalWinLoss(df: pd.DataFrame)-> pd.DataFrame:
     # Flatten the 'win' and 'loss' columns into lists
     win_list = [player for win_set in df["win"] for player in win_set]
     loss_list = [player for loss_set in df["loss"] for player in loss_set]
@@ -35,7 +35,7 @@ def calcTotalWinLoss(df):
     return result_df
 
 
-def calcRatings(df: pd.DataFrame):
+def calcRatings(df: pd.DataFrame) -> pd.DataFrame:
     model = PlackettLuce()
 
     players = {model.rating(name=player) for player in getUniquePlayers(df)}
@@ -56,7 +56,7 @@ def calcRatings(df: pd.DataFrame):
     return df
 
 
-def parse_google_sheet_url(url):
+def parse_google_sheet_url(url: str) -> str:
     match = re.search(r"/d/([a-zA-Z0-9-_]+)", url)
     if not match:
         raise ValueError("Invalid Google Sheets URL")
@@ -65,7 +65,7 @@ def parse_google_sheet_url(url):
     return csv_url
 
 
-def getDataFromGSheet(url):
+def getDataFromGSheet(url: str) -> pd.DataFrame:
     df = pd.read_csv(url, parse_dates=["date"])
     df = df.ffill()
     return df
