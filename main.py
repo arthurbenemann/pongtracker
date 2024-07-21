@@ -29,12 +29,8 @@ def index():
 def processAndPlot(df: pd.DataFrame):
     df = score.calcRatings(df)
     totals = score.calcTotalWinLoss(df)
-
-    #print(df)
-    #print(totals)
-
     df_by_eod = df[['date']+score.getUniquePlayers(df)].groupby('date').last()
-    
+
     fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8), height_ratios=[2, 1])
     trendPlot = axes[0]
     df_by_eod.plot(kind="line", ax=trendPlot)
