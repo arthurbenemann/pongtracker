@@ -31,11 +31,13 @@ def processAndPlot(df: pd.DataFrame):
     totals = score.calcTotalWinLoss(df)
     df_by_eod = df[['date']+score.getUniquePlayers(df)].groupby('date').last()
 
-    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8), height_ratios=[2, 1])
+    plt.tight_layout()
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(19.2, 10.8), height_ratios=[5, 1], layout="constrained")    
     trendPlot = axes[0]
     df_by_eod.plot(kind="line", ax=trendPlot)
     trendPlot.set_xticks(df_by_eod.index)
     trendPlot.set_xticklabels(df_by_eod.index.strftime('%Y-%m-%d'), rotation=45)
+    trendPlot.set_xlabel("")
     trendPlot.grid()
 
     tablePlot = axes[1]
@@ -44,6 +46,13 @@ def processAndPlot(df: pd.DataFrame):
     tablePlot.set_frame_on(False)
     tablePlot.table(cellText=totals.values, colLabels=totals.columns, cellLoc='center', loc='center')
 
+    # tablePlot = axes[2]
+    # tablePlot.xaxis.set_visible(False)
+    # tablePlot.yaxis.set_visible(False)
+    # tablePlot.set_frame_on(False)
+    # tablePlot.table(cellText=totals.values, colLabels=totals.columns, cellLoc='center', loc='center')
+
+    
 
 def main():
     parser = argparse.ArgumentParser(description="Process pongtracker URL")
