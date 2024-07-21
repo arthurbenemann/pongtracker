@@ -34,13 +34,19 @@ def processAndPlot(df: pd.DataFrame):
     #print(totals)
 
     df_by_eod = df[['date']+score.getUniquePlayers(df)].groupby('date').last()
+    
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8), height_ratios=[2, 1])
+    trendPlot = axes[0]
+    df_by_eod.plot(kind="line", ax=trendPlot)
+    trendPlot.set_xticks(df_by_eod.index)
+    trendPlot.set_xticklabels(df_by_eod.index.strftime('%Y-%m-%d'), rotation=45)
+    trendPlot.grid()
 
-    ax = df_by_eod.plot(kind="line")
-    ax.set_xticks(df_by_eod.index)  
-    ax.set_xticklabels(df_by_eod.index.strftime('%Y-%m-%d'), rotation=45)
-
-    ax.grid()
-    #plt.show()
+    tablePlot = axes[1]
+    tablePlot.xaxis.set_visible(False)
+    tablePlot.yaxis.set_visible(False)
+    tablePlot.set_frame_on(False)
+    tablePlot.table(cellText=totals.values, colLabels=totals.columns, cellLoc='center', loc='center')
 
 
 def main():

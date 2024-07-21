@@ -25,11 +25,12 @@ def calcTotalWinLoss(df: pd.DataFrame)-> pd.DataFrame:
     result_df = pd.DataFrame(
         {
             "player": list(players),
+            "MMR": [int(df[player].tail(1)) for player in players],
             "wins": [win_count[player] for player in players],
             "losses": [loss_count[player] for player in players],
         }
     )
-    return result_df
+    return result_df.sort_values(by='MMR',ascending=False)
 
 
 def calcRatings(df: pd.DataFrame) -> pd.DataFrame:
