@@ -70,10 +70,11 @@ def qualityMatches(df,players,model):
                 if match not in matches:
                     matches.append(match)
     
-    df_matchscore = pd.DataFrame(columns=['match', 'quality'])
+    match_score ={}
     for match in matches:
         match_name = match[0][0].name + match[0][1].name+' vs '+ match[1][0].name+match[1][1].name
-        match_score = model.predict_draw(match)
-        df_matchscore = df_matchscore.append({'match':match_name, 'quality': match_score},ignore_index=True)
+        match_score[match_name] = model.predict_draw(match)
     
+    df_matchscore = pd.DataFrame(match_score.items(),columns=['match', 'quality'])
+
     return df_matchscore
