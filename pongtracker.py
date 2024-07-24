@@ -45,7 +45,7 @@ else:
 
     st.altair_chart(c.interactive(), use_container_width=True)
 
-    st.dataframe(totals)
+    st.dataframe(totals, hide_index=True)
 
     df_last = df.iloc[[-1]]
     df_last = df_last.drop(columns=['date','win','loss'])
@@ -62,9 +62,13 @@ else:
                 if match not in matches:
                     matches.append(match)
 
+    df_matchscore = pd.DataFrame(columns=['match', 'quality'])
+    for match in matches:
+        match_name = match[0][0].name + match[0][1].name+' vs '+ match[1][0].name+match[1][1].name
+        match_score = model.predict_draw(match)
+        df_matchscore = df_matchscore.append({'match':match_name, 'quality': match_score},ignore_index=True)
     
-        
-    st.write(matches)
+    st.dataframe(df_matchscore.sort_values('quality', ascending=False), hide_index=True)
 
     with st.expander("Game Log"):
         df.set_index("date", inplace=True)
