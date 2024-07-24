@@ -2,3 +2,5 @@ Flask>=3.0.3
 matplotlib>=3.6.3
 pandas>=1.5.3
 openskill>=6.0.0
+altair
+streamlit

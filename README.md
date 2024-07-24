@@ -8,10 +8,10 @@ For local development use:
 ## Docker Build
 
 Build with:
-`docker build --tag test .`
+`docker build -t pongtracker .`
 
 Run with:
-`docker run --rm -p 8080:5000 -e URL_GSHEET="Google sheet URL"`, 
+`docker run --rm -p 8501:8501 -e URL_GSHEET="" pongtracker`
 
 ## Database - Gsheet
 
