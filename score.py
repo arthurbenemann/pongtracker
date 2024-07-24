@@ -1,6 +1,7 @@
 from openskill.models import PlackettLuce
 import pandas as pd
 from collections import Counter
+from itertools import combinations
 
 
 def getUniquePlayers(df: pd.DataFrame) -> list[str]:
@@ -51,4 +52,28 @@ def calcRatings(df: pd.DataFrame) -> pd.DataFrame:
 
         for player in players:
             df.loc[index, player.name] = player.ordinal(alpha=200/model.sigma, target=1500) # Elo scaling
-    return df
+    return df, players, model
+
+def qualityMatches(df,players,model):
+    df_last = df.iloc[[-1]]
+    df_last = df_last.drop(columns=['date','win','loss'])
+    two_player_combinations = list(combinations(players, 2))
+    
+        # Filter combinations to ensure the teams are disjoint
+    matches = []
+    for combo1 in two_player_combinations:
+        remaining_players = set(players) - set(combo1)
+        for combo2 in combinations(remaining_players, 2):
+            if set(combo2).isdisjoint(set(combo1)):
+                # Sort and add the match to the list
+                match = [sorted(combo1), sorted(combo2)]
+                if match not in matches:
+                    matches.append(match)
+    
+    df_matchscore = pd.DataFrame(columns=['match', 'quality'])
+    for match in matches:
+        match_name = match[0][0].name + match[0][1].name+' vs '+ match[1][0].name+match[1][1].name
+        match_score = model.predict_draw(match)
+        df_matchscore = df_matchscore.append({'match':match_name, 'quality': match_score},ignore_index=True)
+    
+    return df_matchscore
