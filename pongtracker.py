@@ -1,0 +1,51 @@
+import streamlit as st
+import gsheet
+import score
+import pandas as pd
+import altair as alt
+import os
+
+st.markdown(
+    r"""
+    <style>
+    .stDeployButton {
+            visibility: hidden;
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+url_gsheet = os.getenv('URL_GSHEET')
+if url_gsheet is None:
+    st.warning("Pass URL_GSHEET as enviroment var, with url of game database")
+    st.stop()
+else:
+    st.link_button("Game database",url_gsheet)
+
+    df = gsheet.getDfFromGsheet(url_gsheet)
+    df = score.calcRatings(df)
+    totals = score.calcTotalWinLoss(df)
+    df_by_eod = df[["date"] + score.getUniquePlayers(df)].groupby("date").last()
+
+
+    df_by_eod = df_by_eod.reset_index()
+    df_by_eod.rename(columns={"index": "date"}, inplace=True)
+    df_by_eod = pd.melt(df_by_eod, id_vars="date", var_name="player", value_name="MMR")
+
+    c = (
+        alt.Chart(df_by_eod)
+        .mark_line()
+        .encode(
+            x="date:T",
+            y=alt.Y("MMR:Q", scale=alt.Scale(zero=False)),
+            color="player:N",
+        )
+    )
+
+    st.altair_chart(c.interactive(), use_container_width=True)
+
+    st.dataframe(totals)
+
+    with st.expander("Game Log"):
+        df.set_index("date", inplace=True)
+        st.dataframe(df.style.format(precision=0), height=4000, use_container_width=True)

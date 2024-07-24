@@ -1,10 +1,19 @@
 # pongtracker
 
-Build wiht:
+# Development
+
+For local development use:
+`URL_GSHEET="Google sheet URL"  streamlit run test.py`
+
+## Docker Build
+
+Build with:
 `docker build --tag test .`
 
 Run with:
 `docker run --rm -p 8080:5000 -e URL_GSHEET="Google sheet URL"`, 
+
+## Database - Gsheet
 
 Google sheets is used as the database, it should be shared as `Viewer` for `anyone with the link`. Example table below:
 
@@ -15,3 +24,4 @@ Google sheets is used as the database, it should be shared as `Viewer` for `anyo
 |D | B|	|
 |AC | CB| 20240702	|
 |CB | AD| 	|
+
