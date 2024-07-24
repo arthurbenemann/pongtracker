@@ -3,7 +3,7 @@
 # Development
 
 For local development use:
-`URL_GSHEET="Google sheet URL"  streamlit run test.py`
+`URL_GSHEET="Google sheet URL"  streamlit run pongtracker.py`
 
 ## Docker Build
 
