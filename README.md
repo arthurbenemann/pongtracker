@@ -1,5 +1,9 @@
 # pongtracker
 
+For running with docker:
+
+`docker run --rm -p 8501:8501 -e URL_GSHEET="" arthurbdocker/pongtracker`
+
 # Development
 
 For local development use:
