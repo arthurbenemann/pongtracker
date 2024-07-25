@@ -6,10 +6,8 @@ import altair as alt
 import os
 
 st.set_page_config(
-    page_title="PongTracker",
-    page_icon=":table_tennis_paddle_and_ball:",
-    layout= "wide"
-    )
+    page_title="PongTracker", page_icon=":table_tennis_paddle_and_ball:", layout="wide"
+)
 
 st.markdown(
     r"""
@@ -18,21 +16,20 @@ st.markdown(
             visibility: hidden;
         }
     </style>
-    """, unsafe_allow_html=True
+    """,
+    unsafe_allow_html=True,
 )
 
-url_gsheet = os.getenv('URL_GSHEET')
+url_gsheet = os.getenv("URL_GSHEET")
 if url_gsheet is None:
     st.warning("Pass URL_GSHEET as enviroment var, with url of game database")
     st.stop()
 else:
-    
 
     df = gsheet.getDfFromGsheet(url_gsheet)
     df, players, model = score.calcRatings(df)
     totals = score.calcTotalWinLoss(df)
     df_by_eod = df[["date"] + score.getUniquePlayers(df)].groupby("date").last()
-
 
     df_by_eod = df_by_eod.reset_index()
     df_by_eod.rename(columns={"index": "date"}, inplace=True)
@@ -55,17 +52,20 @@ else:
         st.dataframe(totals, hide_index=True, use_container_width=True)
     with col2:
         df_matchscore = score.qualityMatches(df, players, model)
-        st.dataframe(df_matchscore.sort_values('quality', ascending=False), 
-                     hide_index=True, use_container_width=True)
+        st.dataframe(
+            df_matchscore.sort_values("quality", ascending=False),
+            hide_index=True,
+            use_container_width=True,
+        )
 
     with st.expander("Game Log"):
         df.set_index("date", inplace=True)
-        st.dataframe(df.style.format(precision=0), height=4000,
-                     use_container_width=True)
-
+        st.dataframe(
+            df.style.format(precision=0), height=4000, use_container_width=True
+        )
 
     col1, col2 = st.columns(2)
     with col1:
-        st.link_button("Game database",url_gsheet) 
+        st.link_button("Game database", url_gsheet)
     with col2:
-        st.link_button("Codebase","https://github.com/arthurbenemann/pongtracker")                     
+        st.link_button("Codebase", "https://github.com/arthurbenemann/pongtracker")
