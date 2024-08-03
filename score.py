@@ -83,8 +83,21 @@ def qualityMatches(df, players, model):
             + match[1][0].name
             + match[1][1].name
         )
-        match_score[match_name] = model.predict_draw(match)
+        match_score[match_name], _ = model.predict_win(match)
 
     df_matchscore = pd.DataFrame(match_score.items(), columns=["match", "quality"])
+
+    # Identify matches with probability less than 0.5
+    mask = df_matchscore["quality"] < 0.5
+    # Flip match names
+    flipped_matches = (
+        df_matchscore.loc[mask, "match"]
+        .str.split(" vs ")
+        .apply(lambda x: f"{x[1]} vs {x[0]}")
+    )
+    # Update DataFrame
+    df_matchscore.loc[mask, "match"] = flipped_matches
+    df_matchscore.loc[mask, "quality"] = 1 - df_matchscore.loc[mask, "quality"]
+    df_matchscore = df_matchscore.sort_values("quality", ascending=True)
 
     return df_matchscore

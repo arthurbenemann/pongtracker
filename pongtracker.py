@@ -52,10 +52,19 @@ else:
         st.dataframe(totals, hide_index=True, use_container_width=True)
     with col2:
         df_matchscore = score.qualityMatches(df, players, model)
+        df_matchscore["quality"] = df_matchscore["quality"] * 100
+
         st.dataframe(
-            df_matchscore.sort_values("quality", ascending=False),
+            df_matchscore,
+            column_config={
+                "quality": st.column_config.ProgressColumn(
+                    "Prob Win",
+                    format="%.1f",
+                    min_value=0,
+                    max_value=100,
+                ),
+            },
             hide_index=True,
-            use_container_width=True,
         )
 
     with st.expander("Game Log"):
