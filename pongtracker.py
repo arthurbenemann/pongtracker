@@ -30,10 +30,22 @@ else:
     df, players, model = score.calcRatings(df)
     totals = score.calcTotalWinLoss(df)
     df_by_eod = df[["date"] + score.getUniquePlayers(df)].groupby("date").last()
-
     df_by_eod = df_by_eod.reset_index()
     df_by_eod.rename(columns={"index": "date"}, inplace=True)
     df_by_eod = pd.melt(df_by_eod, id_vars="date", var_name="player", value_name="MMR")
+
+    df_by_eod_sigma = (
+        df[["date"] + [p + "upper" for p in score.getUniquePlayers(df)]]
+        .groupby("date")
+        .last()
+    )
+    df_by_eod_sigma = df_by_eod_sigma.reset_index()
+    df_by_eod_sigma.rename(columns={"index": "date"}, inplace=True)
+    df_by_eod_sigma = pd.melt(
+        df_by_eod_sigma, id_vars="date", var_name="player", value_name="MMR"
+    )
+
+    st.write(df_by_eod_sigma)
 
     c = (
         alt.Chart(df_by_eod)
@@ -44,8 +56,17 @@ else:
             color="player:N",
         )
     )
-
-    st.altair_chart(c.interactive(), use_container_width=True)
+    band = (
+        alt.Chart(df_by_eod_sigma)
+        # .mark_errorband(extent="stdev")
+        .mark_line().encode(
+            x="date:T",
+            y=alt.Y("MMR:Q"),
+            color="player:N",
+        )
+    )
+    merge = c + band
+    st.altair_chart(merge.interactive(), use_container_width=True)
 
     col1, col2 = st.columns(2)
     with col1:

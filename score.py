@@ -52,8 +52,17 @@ def calcRatings(df: pd.DataFrame) -> pd.DataFrame:
 
         for player in players:
             df.loc[index, player.name] = player.ordinal(
-                alpha=200 / model.sigma, target=1500
+                alpha=200 / model.sigma, target=1500, z=1
             )  # Elo scaling
+            df.loc[index, player.name + "upper"] = player.ordinal(
+                alpha=200 / model.sigma, target=1500, z=-1
+            )  # Elo scaling
+
+            # df.loc[index, player.name + "upper"] = (
+            #     player.sigma * 3 * (200 / model.sigma)
+            # )
+
+            # df.loc[index, player.name] = player.sigma
     return df, players, model
 
 
